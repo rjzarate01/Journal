@@ -1,0 +1,116 @@
+//Robert J. Zarate  
+//CS 210
+
+
+
+
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <string>
+
+using namespace std;
+
+class ItemTracker {
+private:
+    map<string, int> itemFrequency;
+    string inputFile = "CS210_Project_Three_Input_File.txt";
+    string backupFile = "frequency.dat";
+
+public:
+    // Constructor: Reads file and populates the map
+    ItemTracker() {
+        loadItems();
+        saveBackup();
+    }
+
+    // Load items from file into map
+    void loadItems() {
+        ifstream inFile(inputFile);
+        string item;
+
+        if (!inFile) {
+            cerr << "Error: Unable to open input file!\n";
+            return;
+        }
+
+        while (inFile >> item) {
+            itemFrequency[item]++;
+        }
+
+        inFile.close();
+    }
+
+    // Save data to backup file
+    void saveBackup() {
+        ofstream outFile(backupFile);
+        for (const auto& pair : itemFrequency) {
+            outFile << pair.first << " " << pair.second << endl;
+        }
+        outFile.close();
+    }
+
+    // Get frequency of a specific item
+    int getItemFrequency(const string& item) {
+        return itemFrequency[item];
+    }
+
+    // Display all items with their frequencies
+    void displayAllItems() {
+        for (const auto& pair : itemFrequency) {
+            cout << pair.first << " " << pair.second << endl;
+        }
+    }
+
+    // Display histogram
+    void displayHistogram() {
+        for (const auto& pair : itemFrequency) {
+            cout << pair.first << " ";
+            for (int i = 0; i < pair.second; i++) {
+                cout << "*";
+            }
+            cout << endl;
+        }
+    }
+};
+
+// Display menu and handle user input
+void displayMenu(ItemTracker& tracker) {
+    int choice;
+    string item;
+
+    do {
+        cout << "\nCorner Grocer Item Tracker\n";
+        cout << "1. Search for an item\n";
+        cout << "2. Display all items with frequency\n";
+        cout << "3. Display histogram\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Enter item name: ";
+            cin >> item;
+            cout << "Frequency: " << tracker.getItemFrequency(item) << endl;
+            break;
+        case 2:
+            tracker.displayAllItems();
+            break;
+        case 3:
+            tracker.displayHistogram();
+            break;
+        case 4:
+            cout << "Exiting program...\n";
+            break;
+        default:
+            cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 4);
+}
+
+int main() {
+    ItemTracker tracker;
+    displayMenu(tracker);
+    return 0;
+}
